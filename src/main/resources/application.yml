@@ -1,0 +1,69 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: mcp-client-demo7
+  ai:
+    openai:
+      enabled: true
+      api-key: sk-c82a3957785d4c48b08a62e0e707ecf2
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-chat
+    model:
+      chat:
+        client:
+          enabled: false
+          
+    mcp:
+      client:
+        enabled: true
+        name: mcp-client-demo7
+        version: 0.0.1
+        initialized: true
+        request-timeout: 60s
+        type: sync
+        toolcallback:
+          enabled: true
+        root-change-notification: true
+        sse:
+          connections:
+            userCenter:
+              url: http://127.0.0.1:8084
+              sse-path: /sse
+              headers-map:
+                Content-Type: application/json
+                Accept: text/event-stream
+            userQKCenter:
+              url: http://127.0.0.1:8085
+              sse-path: /sse
+              headers-map:
+                Content-Type: application/json
+                Accept: text/event-stream
+
+# Explicitly set MCP server configuration
+mcp:
+  server:
+    usercenter:
+      url: http://127.0.0.1:8084
+      sse-path: /sse
+    userqkcenter:
+      url: http://127.0.0.1:8085
+      sse-path: /sse
+
+# Logging configuration
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+        web.reactive.function.client: DEBUG
+    com:
+      example:
+        mcpclientdemo7: DEBUG
+    io:
+      modelcontextprotocol:
+        client: DEBUG
+        spec: DEBUG 
