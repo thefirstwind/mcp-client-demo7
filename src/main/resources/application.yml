@@ -6,7 +6,7 @@ spring:
     name: mcp-client-demo7
   ai:
     openai:
-      enabled: true
+      enabled: false
       api-key: sk-c82a3957785d4c48b08a62e0e707ecf2
       base-url: https://api.deepseek.com
       chat:
@@ -58,10 +58,15 @@ logging:
       springframework:
         web: INFO
         web.reactive.function.client: DEBUG
+        web.reactive: DEBUG
     com:
       example:
         mcpclientdemo7: DEBUG
     io:
       modelcontextprotocol:
         client: DEBUG
-        spec: DEBUG 
+        spec: DEBUG
+    reactor:
+      netty:
+        http:
+          client: DEBUG

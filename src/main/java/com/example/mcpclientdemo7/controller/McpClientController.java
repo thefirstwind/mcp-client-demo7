@@ -110,46 +110,5 @@ public class McpClientController {
             });
     }
 
-    /**
-     * Simple GET endpoints for testing
-     */
-    @GetMapping("/say-hello/userCenter")
-    public ResponseEntity<Object> sayHelloUserCenter() {
-        Map<String, Object> request = new HashMap<>();
-        request.put("message", "Hello from MCP client!");
-        String toolName = "sayHello";
-        String response = mcpService.callUserCenterSync(toolName, request);
-        
-        if (response.startsWith("Error:")) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("error", response.substring(7));
-            errorResponse.put("status", "error");
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
-        
-        Map<String, Object> successResponse = new HashMap<>();
-        successResponse.put("response", response);
-        successResponse.put("status", "success");
-        return ResponseEntity.ok(successResponse);
-    }
 
-    @GetMapping("/say-hello/userQKCenter")
-    public ResponseEntity<Object> sayHelloUserQKCenter() {
-        Map<String, Object> request = new HashMap<>();
-        request.put("message", "Hello from MCP client!");
-        String toolName = "sayHello";
-        String response = mcpService.callUserQKCenterSync(toolName, request);
-        
-        if (response.startsWith("Error:")) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("error", response.substring(7));
-            errorResponse.put("status", "error");
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
-        
-        Map<String, Object> successResponse = new HashMap<>();
-        successResponse.put("response", response);
-        successResponse.put("status", "success");
-        return ResponseEntity.ok(successResponse);
-    }
-} 
+}

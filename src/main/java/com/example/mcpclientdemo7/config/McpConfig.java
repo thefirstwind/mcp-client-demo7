@@ -119,20 +119,31 @@ public class McpConfig {
                 .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(size))
                 .build();
 
-        HttpClient httpClient = HttpClient.create().resolver(DefaultAddressResolverGroup.INSTANCE);
+        // 创建具有更好错误处理和超时设置的 HttpClient
+        HttpClient httpClient = HttpClient.create()
+                .resolver(DefaultAddressResolverGroup.INSTANCE)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000) // 10 seconds
+                .doOnConnected(conn -> conn
+                        .addHandlerLast(new ReadTimeoutHandler(30, TimeUnit.SECONDS))
+                        .addHandlerLast(new WriteTimeoutHandler(30, TimeUnit.SECONDS)));
 
         WebClient.Builder webClientBuilder = WebClient.builder()
                 .baseUrl(userCenterUrl)
                 .exchangeStrategies(strategies)
-//                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.TEXT_EVENT_STREAM_VALUE);
         
-        // Use builder pattern from official SDK implementation
-        return WebFluxSseClientTransport.builder(webClientBuilder)
+        // Use builder pattern from official SDK implementation with enhanced error handling
+        WebFluxSseClientTransport transport = WebFluxSseClientTransport.builder(webClientBuilder)
                 .objectMapper(objectMapper)
                 .sseEndpoint(userCenterSsePath)
                 .build();
+        
+        // 记录自定义错误处理逻辑
+        log.info("UserCenter SSE transport configured with enhanced error handling");
+        
+        return transport;
     }
     
     @Bean
@@ -142,19 +153,32 @@ public class McpConfig {
         final ExchangeStrategies strategies = ExchangeStrategies.builder()
                 .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(size))
                 .build();
-        HttpClient httpClient = HttpClient.create().resolver(DefaultAddressResolverGroup.INSTANCE);
+
+        // 创建具有更好错误处理和超时设置的 HttpClient
+        HttpClient httpClient = HttpClient.create()
+                .resolver(DefaultAddressResolverGroup.INSTANCE)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000) // 10 seconds
+                .doOnConnected(conn -> conn
+                        .addHandlerLast(new ReadTimeoutHandler(30, TimeUnit.SECONDS))
+                        .addHandlerLast(new WriteTimeoutHandler(30, TimeUnit.SECONDS)));
+
         WebClient.Builder webClientBuilder = WebClient.builder()
                 .baseUrl(userQKCenterUrl)
                 .exchangeStrategies(strategies)
-//                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.TEXT_EVENT_STREAM_VALUE);
         
-        // Use builder pattern from official SDK implementation
-        return WebFluxSseClientTransport.builder(webClientBuilder)
+        // Use builder pattern from official SDK implementation with enhanced error handling
+        WebFluxSseClientTransport transport = WebFluxSseClientTransport.builder(webClientBuilder)
                 .objectMapper(objectMapper)
                 .sseEndpoint(userQKCenterSsePath)
                 .build();
+        
+        // 记录自定义错误处理逻辑
+        log.info("UserQKCenter SSE transport configured with enhanced error handling");
+        
+        return transport;
     }
     
     @Bean
@@ -180,7 +204,7 @@ public class McpConfig {
         asyncSpec.requestTimeout(Duration.ofSeconds(60));
         return asyncSpec.build();
     }
-    
+
     @Bean
     public McpAsyncClient userQKCenterMcpAsyncClient(WebFluxSseClientTransport userQKCenterTransport) {
         McpClient.AsyncSpec asyncSpec = McpClient.async(userQKCenterTransport);
