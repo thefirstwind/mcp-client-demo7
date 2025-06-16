@@ -7,6 +7,8 @@ import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpError;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.json.JSONParser;
+import org.springframework.ai.util.json.JsonParser;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -110,7 +112,13 @@ public class McpService {
                         log.warn("Retrying UserCenter async client initialization, attempt: {}", 
                             retrySignal.totalRetries() + 1)))
                 .doOnError(e -> log.error("Failed to initialize UserCenter MCP async client after retries: {}", e.getMessage(), e))
-                .block(Duration.ofSeconds(30));
+                    .subscribe(
+                            event -> log.info("subscribe Received: {}", event),
+                            error -> log.error("subscribe Error: {}", error),
+                            () -> log.info("subscribe Completed")
+                    )
+//                    .block(Duration.ofSeconds(30))
+            ;
             log.info("UserCenter MCP async client initialized successfully");
         } catch (Exception e) {
             log.error("Failed to initialize UserCenter MCP async client: {}", e.getMessage(), e);
@@ -126,7 +134,12 @@ public class McpService {
                         log.warn("Retrying UserQKCenter async client initialization, attempt: {}", 
                             retrySignal.totalRetries() + 1)))
                 .doOnError(e -> log.error("Failed to initialize UserQKCenter MCP async client after retries: {}", e.getMessage(), e))
-                .block(Duration.ofSeconds(30));
+                    .subscribe(
+                            event -> log.info("subscribe Received: {}", event),
+                            error -> log.error("subscribe Error: {}", error),
+                            () -> log.info("subscribe Completed")
+                    );
+//                    .block(Duration.ofSeconds(30));
             log.info("UserQKCenter MCP async client initialized successfully");
         } catch (Exception e) {
             log.error("Failed to initialize UserQKCenter MCP async client: {}", e.getMessage(), e);
@@ -147,7 +160,7 @@ public class McpService {
             log.debug("Calling UserCenter with request: {}", request);
             
             McpSchema.CallToolResult result = userCenterMcpClient.callTool(request);
-            
+
             if (result.isError() != null && result.isError()) {
                 return "Error: " + result.content();
             } else {

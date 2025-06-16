@@ -16,12 +16,11 @@ spring:
       chat:
         client:
           enabled: false
-          
     mcp:
       client:
         enabled: true
         name: mcp-client-demo7
-        version: 0.0.1
+        version: 1.0.0
         initialized: true
         request-timeout: 60s
         type: sync
@@ -42,7 +41,6 @@ spring:
               headers-map:
                 Content-Type: application/json
                 Accept: text/event-stream
-
 # Explicitly set MCP server configuration
 mcp:
   server:

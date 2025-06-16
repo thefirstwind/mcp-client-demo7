@@ -19,7 +19,6 @@ public class McpClientDemo7Application {
         // Set system properties to disable OpenAI
         System.setProperty("spring.ai.openai.enabled", "false");
         System.setProperty("spring.ai.model.chat.client.enabled", "false");
-        
         // Run the application
         SpringApplication app = new SpringApplication(McpClientDemo7Application.class);
         app.run(args);

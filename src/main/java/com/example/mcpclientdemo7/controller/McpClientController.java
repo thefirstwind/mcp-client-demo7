@@ -29,7 +29,7 @@ public class McpClientController {
      */
     @PostMapping("/sync/userCenter/webclient")
     public ResponseEntity<Object> callUserCenterSyncWebClient(@RequestBody Map<String, Object> request) {
-        String toolName = "findBooksByTitle";
+        String toolName = "sayHello";
         String response = mcpService.callUserCenterSync(toolName, request);
         
         if (response.startsWith("Error:")) {
